@@ -1,7 +1,13 @@
 package com.pruebasoap.endpoint;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,7 @@ import com.pruebasoap.empleado_ws.GetAllEmpleadosResponse;
 import com.pruebasoap.empleado_ws.GetEmpleadoByIdRequest;
 import com.pruebasoap.empleado_ws.GetEmpleadoByIdResponse;
 import com.pruebasoap.empleado_ws.ServiceStatus;
+import com.pruebasoap.empleado_ws.Tiempo;
 import com.pruebasoap.empleado_ws.UpdateEmpleadoRequest;
 import com.pruebasoap.empleado_ws.UpdateEmpleadoResponse;
 import com.pruebasoap.entity.Empleado;
@@ -76,7 +83,10 @@ public class EmpleadoEndPoint {
 	public AddEmpleadoResponse addEmpleado(@RequestPayload AddEmpleadoRequest request) {
 		AddEmpleadoResponse response = new AddEmpleadoResponse();
 		EmpleadoType newEmpleadoType = new EmpleadoType();
+		Tiempo newtiempoVinculacion= diferenciaFechas(request.getFechaIniComp());
+		Tiempo newEdad=diferenciaFechas(request.getFechaNacimiento());
 		ServiceStatus serviceStatus = new ServiceStatus();
+		
 
 		Empleado newEmpleadoEntity = new Empleado(request.getNombres(), request.getApellidos(),request.getTipoDoc(),request.getNumeroDoc(),request.getFechaNacimiento(),request.getFechaIniComp(),request.getCargo(),request.getSalario());
 		Empleado savedEmpleadoEntity = service.addEntity(newEmpleadoEntity);
@@ -91,8 +101,10 @@ public class EmpleadoEndPoint {
 			serviceStatus.setMessage("Empleado agregado correctamente");
 		}
 
-		response.setMovieType(newEmpleadoType);
+		response.setEmpleadoType(newEmpleadoType);
 		response.setServiceStatus(serviceStatus);
+		response.setTiempoVinculacion(newtiempoVinculacion);
+		response.setEdad(newEdad);
 		return response;
 
 	}
@@ -157,6 +169,22 @@ public class EmpleadoEndPoint {
 
 		response.setServiceStatus(serviceStatus);
 		return response;
+	} 
+	
+	
+	public Tiempo diferenciaFechas(XMLGregorianCalendar fecIni) {  
+		
+		Tiempo tiempoDiferencia=new Tiempo();		
+		LocalDate fechaInicial = fecIni.toGregorianCalendar().toZonedDateTime().toLocalDate();
+		LocalDate today=LocalDate.now(); 
+		
+		Period periodo = Period.between(fechaInicial, today);
+		
+		tiempoDiferencia.setAnio(periodo.getYears());
+		tiempoDiferencia.setMeses(periodo.getMonths());
+		tiempoDiferencia.setDias(periodo.getDays()); 
+		
+		return tiempoDiferencia;
 	}
 
 

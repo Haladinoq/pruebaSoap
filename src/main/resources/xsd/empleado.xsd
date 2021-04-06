@@ -68,10 +68,19 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="serviceStatus" type="tns:serviceStatus"/>            
-                <xs:element name="movieType" type="tns:empleadoType"/>
+                <xs:element name="empleadoType" type="tns:empleadoType"/>
+                <xs:element name="tiempoVinculacion" type="tns:tiempo"/>
+                <xs:element name="edad" type="tns:tiempo"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:complexType name="tiempo">
+		<xs:sequence>
+			<xs:element name="anio" type="xs:int" />
+			<xs:element name="meses" type="xs:int" />
+			<xs:element name="dias" type="xs:int" />			
+		</xs:sequence>
+	</xs:complexType>
     <xs:element name="updateEmpleadoRequest">
         <xs:complexType>
             <xs:sequence>
